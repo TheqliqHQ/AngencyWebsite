@@ -1,6 +1,14 @@
+// next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: { typedRoutes: true },
-  images: { domains: ["i.ytimg.com", "images.unsplash.com"] },
+  reactStrictMode: true,
+  images: {
+    domains: ["i.ytimg.com", "images.unsplash.com"],
+  },
+  experimental: {
+    // Disable to avoid strict href typing issues in next/link on Vercel
+    typedRoutes: false,
+  },
 };
+
 export default nextConfig;
