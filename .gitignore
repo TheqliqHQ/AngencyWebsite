@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+.next/cache/
+
+# Contentlayer (generated)
+.contentlayer/
+
+# Builds & coverage
+dist/
+build/
+coverage/
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS/Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Lockfile — keep this!
+# (DO NOT ignore pnpm-lock.yaml; commit it)

@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   Theqliq design tokens
+   ========================= */
+:root{
+  --brand:#009673;
+  --ink:rgb(16,18,19);
+  --slate:#1B2530;
+  --cloud: rgb(237,244,245); /* homepage + navbar background */
+  --paper:#FFFFFF;
+  --accent:#11BFAE;
+  --warn:#FFCC00;
+}
+
+/* =========================
+   Base typography
+   ========================= */
+
+/* Body/UI = Geist (loaded in <head>) */
+html, body{
+  height:100%;
+  background:var(--cloud);
+  color:var(--ink);
+  font-family: Geist, "Geist Placeholder", sans-serif; /* Body/menus/buttons */
+  font-weight:400;
+}
+
+/* Headings (site-wide) = Inter (Display) via next/font variable
+   Covers: native headings, ARIA headings, and headings inside .prose */
+h1, h2, h3, h4, h5, h6,
+[role="heading"],
+.prose :where(h1,h2,h3,h4,h5,h6){
+  font-family: var(--font-inter), "Inter", "Inter Display", "Inter Display Placeholder", sans-serif;
+  font-weight:600;                 /* default; override per component if needed */
+  /* Give Inter a 'display' feel when variable font is used */
+  font-variation-settings: "opsz" 32;
+}
+
+/* =========================
+   Subtle grids & hero glow
+   ========================= */
+.bg-grid{
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+.bg-grid-hero{
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size:56px 56px;
+}
+.hero-glow{
+  position:absolute; inset:0;
+  background:radial-gradient(700px 360px at 50% 35%, rgba(0,0,0,0.08), transparent 60%);
+  pointer-events:none;
+}
+
+/* =========================
+   Pills & focus
+   ========================= */
+.pill{
+  @apply inline-block rounded-full px-3 py-1 text-sm bg-white shadow-sm border border-black/5;
+}
+:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:2px;
+}
+
+/* =========================
+   Scoped Nav typography (desktop bar)
+   (affects only <nav data-ql="nav">)
+   ========================= */
+[data-ql="nav"] .ql-nav-link{
+  font-family: Geist, "Geist Placeholder", sans-serif;  /* ensure body font */
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: rgba(16, 18, 19, .62);  /* softer, like the reference */
+  transition: color .2s ease;
+}
+[data-ql="nav"] .ql-nav-link:hover,
+[data-ql="nav"] .ql-nav-link:focus-visible,
+[data-ql="nav"] .ql-nav-link[aria-current="page"]{
+  color: rgb(16, 18, 19);        /* full ink on hover/focus/active */
+}
+
+[data-ql="nav"] .ql-nav-cta{
+  font-family: Geist, "Geist Placeholder", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  color: rgb(16, 18, 19);
+}
+
+/* Hiring chip — used next to Careers (desktop + mobile) */
+.ql-hiring-pill{
+  display:inline-block;
+  padding: 4px 10px;
+  border-radius:9999px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,0.1);
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+  font-family: Geist, "Geist Placeholder", sans-serif;
+  font-weight:500;
+  font-size:12px;
+  line-height:18px;
+  color: rgb(16,18,19);
+}
