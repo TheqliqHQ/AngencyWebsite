@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 type TitleProp = string | [string, string, string];
 
@@ -12,7 +13,6 @@ type Props = {
   title?: TitleProp;
 };
 
-// Change extensions if your files aren't .jpg
 const FRONT_SRC = "/thumbnails/front.jpeg";
 const BACK_SRC  = "/thumbnails/back.jpeg";
 
@@ -35,6 +35,22 @@ export default function VideoThumbnailBranded({
 }: Props) {
   const [l1, l2, l3] = normalizeTitle(title);
 
+  // Scroll-linked animation
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: wrapRef,
+    offset: ["start 85%", "center 40%"],
+  });
+
+  const rawScale   = useTransform(scrollYProgress, [0, 1], [0.79, 1]);
+  const rawY       = useTransform(scrollYProgress, [0, 1], [24, 0]);
+  const rawOpacity = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
+
+  // Slick feel
+  const scale   = useSpring(rawScale,   { stiffness: 120, damping: 22, mass: 0.45 });
+  const y       = useSpring(rawY,       { stiffness: 120, damping: 22, mass: 0.45 });
+  const opacity = useSpring(rawOpacity, { stiffness: 120, damping: 24, mass: 0.45 });
+
   // Inline modal
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -49,65 +65,68 @@ export default function VideoThumbnailBranded({
 
   return (
     <>
-      {/* inherit page background; no light frame */}
-      <section className={`py-8 ${className}`} aria-label="Video">
-        {/* fixed 847×530 (scales down) */}
-        <div className="relative mx-auto w-[92%] max-w-[847px] aspect-[847/530] isolate">
-          {/* dark outer drop shadow (no white halo) */}
-          <div className="absolute -inset-0.5 rounded-[22px] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] pointer-events-none" />
-
-          {/* dark panel (no ring) */}
-          <div className="absolute inset-0 overflow-hidden rounded-[22px] bg-[#111416]">
-            {/* BACK image — small & ABOVE “BRANDING” */}
-            <div className="absolute left-[58%] top-[35%] z-10 -translate-x-1/2 -translate-y-1/2 rotate-[14deg] w-[14%] md:w-[13%]">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
-                <Image
-                  src={BACK_SRC}
-                  alt=""
-                  fill
-                  sizes="(max-width: 847px) 20vw, 14vw"
-                  className="object-cover brightness-95"
-                  priority
-                />
-              </div>
+      {/* Light page bg outside the card */}
+      <section className={`py-8 bg-[#EDF4F5] ${className}`} aria-label="Video">
+        {/* The wrapper IS the black panel — no rings, no outlines, no outer glow */}
+        <motion.div
+          ref={wrapRef}
+          style={{ scale, y, opacity, willChange: "transform" }}
+          className="
+            relative mx-auto w-[92%] max-w-[852px] aspect-[852/534]
+            rounded-[22px] overflow-hidden
+            bg-[#111416]                         /* solid black panel */
+            [transform:translateZ(0)]             /* reduce AA */
+          "
+        >
+          {/* BACK image (small, above BRANDING) */}
+          <div className="absolute left-[58%] top-[35%] z-10 -translate-x-1/2 -translate-y-1/2 rotate-[14deg] w-[14%] md:w-[13%]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-xl shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
+              <Image
+                src={BACK_SRC}
+                alt=""
+                fill
+                sizes="(max-width: 852px) 20vw, 14vw"
+                className="object-cover brightness-95"
+                priority
+              />
             </div>
-
-            {/* FRONT image — small & ABOVE “BRANDING” */}
-            <div className="absolute left-[42%] top-[34%] z-20 -translate-x-1/2 -translate-y-1/2 -rotate-[10deg] w-[16%] md:w-[14.5%]">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl shadow-[0_18px_55px_rgba(0,0,0,0.55)]">
-                <Image
-                  src={FRONT_SRC}
-                  alt=""
-                  fill
-                  sizes="(max-width: 847px) 22vw, 16vw"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Title */}
-            <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center text-center text-white font-[600]">
-              <div className="leading-[0.98] tracking-tight px-4">
-                <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l1}</div>
-                <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l2}</div>
-                <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l3}</div>
-              </div>
-            </div>
-
-            {/* Smaller BLACK play button (white triangle) */}
-            <button
-              type="button"
-              aria-label="Play video"
-              onClick={() => videoId && setOpen(true)}
-              className="absolute left-1/2 top-1/2 z-40 grid h-10 w-10 md:h-11 md:w-11 -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full bg-black text-white shadow-md ring-1 ring-black/40 transition hover:bg-black/90"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </button>
           </div>
-        </div>
+
+          {/* FRONT image (small, above BRANDING) */}
+          <div className="absolute left-[42%] top-[34%] z-20 -translate-x-1/2 -translate-y-1/2 -rotate-[10deg] w-[16%] md:w-[14.5%]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-xl shadow-[0_18px_55px_rgba(0,0,0,0.55)]">
+              <Image
+                src={FRONT_SRC}
+                alt=""
+                fill
+                sizes="(max-width: 852px) 22vw, 16vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Title */}
+          <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center text-center text-white font-[600]">
+            <div className="leading-[0.98] tracking-tight px-4">
+              <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l1}</div>
+              <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l2}</div>
+              <div className="heading-display text-[clamp(26px,5.8vw,58px)]">{l3}</div>
+            </div>
+          </div>
+
+          {/* Play button (solid black, no transparency) */}
+          <button
+            type="button"
+            aria-label="Play video"
+            onClick={() => videoId && setOpen(true)}
+            className="absolute left-1/2 top-1/2 z-40 grid h-10 w-10 md:h-11 md:w-11 -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full bg-black text-white shadow-md transition hover:bg-black/90"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        </motion.div>
       </section>
 
       {/* Inline modal */}
@@ -119,7 +138,7 @@ export default function VideoThumbnailBranded({
           aria-modal="true"
         >
           <div
-            className="relative w-[min(92vw,847px)] aspect-[847/530] bg-black rounded-xl overflow-hidden shadow-2xl"
+            className="relative w-[min(92vw,852px)] aspect-[852/534] bg-black rounded-xl overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <iframe
