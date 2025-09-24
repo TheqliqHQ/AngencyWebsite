@@ -1,6 +1,7 @@
+// app/page.tsx
 import NavBar from '@/components/NavBar'
 import Hero from '@/components/Hero'
-import VideoEmbed from '@/components/VideoEmbed'   // ← add this
+import VideoThumbnailBranded from '@/components/VideoThumbnailBranded'
 import Clients from '@/components/Clients'
 import Services from '@/components/Services'
 import Process from '@/components/Process'
@@ -17,8 +18,12 @@ export default function Page() {
       <NavBar />
       <Hero />
 
-      {/* YouTube section — big black panel */}
-      <VideoEmbed videoId="YOUR_YOUTUBE_ID" title="Theqliq — video" />
+      {/* Branded YouTube thumbnail with local images */}
+      <VideoThumbnailBranded
+        videoId="YOUR_YOUTUBE_ID"               // optional
+        title={["CONTENT", "BRANDING", "STRATEGY"]} // 3-word process, per your choice
+        size="md"                                // "sm" | "md" | "lg"
+      />
 
       <Clients />
       <Services />

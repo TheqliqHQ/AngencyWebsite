@@ -1,14 +1,19 @@
-// next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  experimental: { typedRoutes: true },
   images: {
-    domains: ["i.ytimg.com", "images.unsplash.com"],
-  },
-  experimental: {
-    // Disable to avoid strict href typing issues in next/link on Vercel
-    typedRoutes: false,
+    // Simple allow-list
+    domains: [
+      'images.unsplash.com',
+      'img.youtube.com',  // <- YouTube thumbnails
+      'i.ytimg.com'       // <- Alt YouTube host (sometimes used)
+    ],
+    // Or use remotePatterns if you prefer:
+    // remotePatterns: [
+    //   { protocol: 'https', hostname: 'images.unsplash.com' },
+    //   { protocol: 'https', hostname: 'img.youtube.com' },
+    //   { protocol: 'https', hostname: 'i.ytimg.com' },
+    // ],
   },
 };
-
 export default nextConfig;

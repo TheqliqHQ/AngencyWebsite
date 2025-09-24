@@ -5,7 +5,7 @@ import { interDisplay } from "./fonts";
 
 export const metadata: Metadata = {
   title: {
-    default: "Theqliq — Structure for brand growth",
+    default: "Theqliq Digital Agency",
     template: "%s · Theqliq",
   },
   description:
