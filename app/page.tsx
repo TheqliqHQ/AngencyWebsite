@@ -20,9 +20,8 @@ export default function Page() {
 
       {/* Branded YouTube thumbnail with local images */}
       <VideoThumbnailBranded
-        videoId="YOUR_YOUTUBE_ID"               // optional
-        title={["CONTENT", "BRANDING", "STRATEGY"]} // 3-word process, per your choice
-        size="md"                                // "sm" | "md" | "lg"
+        videoId="YOUR_YOUTUBE_ID"
+        title={['CONTENT', 'BRANDING', 'STRATEGY']}
       />
 
       <Clients />
