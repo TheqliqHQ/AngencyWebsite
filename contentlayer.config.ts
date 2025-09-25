@@ -1,18 +1,33 @@
+// contentlayer.config.ts
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 
-// Example Blog schema
 export const Blog = defineDocumentType(() => ({
   name: "Blog",
-  filePathPattern: `**/*.mdx`,
+  // your MDX are under content/blog/...
+  filePathPattern: `blog/**/*.mdx`,
   fields: {
     title: { type: "string", required: true },
     date: { type: "date", required: true },
-    description: { type: "string" },
+    description: { type: "string", required: false },
+    // <-- Add this to match your MDX front-matter
+    tags: { type: "list", of: { type: "string" }, required: false },
+  },
+  computedFields: {
+    // e.g. "clarity-currency"
+    slug: {
+      type: "string",
+      resolve: (doc) => doc._raw.sourceFileName.replace(/\.mdx?$/, ""),
+    },
+    // e.g. "/blog/clarity-currency"
+    url: {
+      type: "string",
+      resolve: (doc) =>
+        `/blog/${doc._raw.flattenedPath.replace(/^blog\//, "")}`,
+    },
   },
 }));
 
-// Source definition
 export default makeSource({
-  contentDirPath: "content", // this folder is already in your project
+  contentDirPath: "content",
   documentTypes: [Blog],
 });
