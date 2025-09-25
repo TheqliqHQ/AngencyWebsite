@@ -1,3 +1,4 @@
+// src/components/VideoThumbnailBranded.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +12,8 @@ type Props = {
   className?: string;
   /** 3-line title; pass a string or a tuple of 3 strings */
   title?: TitleProp;
+  /** Optional size to match page usage */
+  size?: "sm" | "md" | "lg";
 };
 
 // Local thumbnail files
@@ -34,8 +37,19 @@ export default function VideoThumbnailBranded({
   videoId,
   className = "",
   title,
+  size = "md",
 }: Props) {
   const [l1, l2, l3] = normalizeTitle(title);
+
+  /* ---------- Sizing based on prop ---------- */
+  // Base designs:
+  // sm: ~720×451, md: ~852×534 (default), lg: ~960×601
+  const dims =
+    size === "sm"
+      ? "max-w-[720px] aspect-[720/451]"
+      : size === "lg"
+      ? "max-w-[960px] aspect-[960/601]"
+      : "max-w-[852px] aspect-[852/534]";
 
   /* ---------- Scroll-linked animation ---------- */
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -44,7 +58,7 @@ export default function VideoThumbnailBranded({
     offset: ["start 85%", "center 40%"],
   });
 
-  // 0.79 * 852 ≈ 675 (requested start width)
+  // 0.79 start scale gives ~675px width when size=md (852px * .79)
   const rawScale   = useTransform(scrollYProgress, [0, 1], [0.79, 1]);
   const rawY       = useTransform(scrollYProgress, [0, 1], [24, 0]);
   const rawOpacity = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
@@ -73,11 +87,11 @@ export default function VideoThumbnailBranded({
         <motion.div
           ref={wrapRef}
           style={{ scale, y, opacity, willChange: "transform" }}
-          className="
-            relative mx-auto w-[92%] max-w-[852px] aspect-[852/534]
+          className={`
+            relative mx-auto w-[92%] ${dims}
             overflow-hidden bg-[#111214]
             rounded-[12px] [transform:translateZ(0)]
-          "
+          `}
         >
           {/* BACK image — small & above “BRANDING” */}
           <div className="absolute left-[58%] top-[35%] z-10 -translate-x-1/2 -translate-y-1/2 rotate-[14deg] w-[14%] md:w-[13%]">
@@ -86,7 +100,7 @@ export default function VideoThumbnailBranded({
                 src={BACK_SRC}
                 alt=""
                 fill
-                sizes="(max-width: 852px) 20vw, 14vw"
+                sizes="(max-width: 960px) 20vw, 14vw"
                 className="object-cover brightness-95"
                 priority
               />
@@ -100,14 +114,14 @@ export default function VideoThumbnailBranded({
                 src={FRONT_SRC}
                 alt=""
                 fill
-                sizes="(max-width: 852px) 22vw, 16vw"
+                sizes="(max-width: 960px) 22vw, 16vw"
                 className="object-cover"
                 priority
               />
             </div>
           </div>
 
-          {/* Title (slightly bigger now) */}
+          {/* Title */}
           <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center text-center text-white font-[600]">
             <div className="leading-[0.98] tracking-tight px-4">
               <div className="heading-display text-[clamp(28px,6.4vw,64px)]">{l1}</div>
@@ -116,7 +130,7 @@ export default function VideoThumbnailBranded({
             </div>
           </div>
 
-          {/* Play button (solid #111214, not transparent) */}
+          {/* Play button */}
           <button
             type="button"
             aria-label="Play video"
@@ -144,7 +158,12 @@ export default function VideoThumbnailBranded({
           aria-modal="true"
         >
           <div
-            className="relative w-[min(92vw,852px)] aspect-[852/534] bg-[#111214] rounded-[12px] overflow-hidden shadow-2xl"
+            className={`
+              relative bg-[#111214] rounded-[12px] overflow-hidden shadow-2xl
+              ${size === "sm" ? "w-[min(92vw,720px)] aspect-[720/451]"
+               : size === "lg" ? "w-[min(92vw,960px)] aspect-[960/601]"
+               : "w-[min(92vw,852px)] aspect-[852/534]"}
+            `}
             onClick={(e) => e.stopPropagation()}
           >
             <iframe
