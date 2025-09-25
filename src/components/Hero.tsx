@@ -33,9 +33,10 @@ export default function Hero() {
         </h1>
 
         {/* Subtext — Geist 400 | 16/24 | rgb(77,82,83) */}
-        <p className="mt-6 max-w-3xl mx-auto font-[400] text-[16px] leading-[24px] text-[rgb(77,82,83)]">
-          From strategy to shipping, we partner with startups and tech teams to create scalable, user-driven products — fast, and future-ready.
-        </p>
+        <p className="mx-auto mt-6 max-w-[720px] px-4 text-center text-[16px] leading-[24px] text-[rgb(77,82,83)]">
+  At Theqliq, we are agile, strategic, innovative, and passionate. Using data driven marketing solutions, we help our clients make faster and more meaningful connections with their target audience.
+</p>
+
 
         {/* CTAs — sizes/weights per spec */}
         <div className="mt-10 flex items-center justify-center gap-3">
